@@ -24,7 +24,7 @@ Backend RESTful en **Java 21** y **Spring Boot 4** para la administración: gest
 
 ---
 
-## 🏛 Arquitectura y Modelo de Dominio
+## Arquitectura y Modelo de Dominio
 
 ### Diagrama Entidad-Relación 
 
