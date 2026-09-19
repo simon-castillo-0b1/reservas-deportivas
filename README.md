@@ -1,4 +1,4 @@
-# 🏆 Sports Reservations API — Portfolio Backend
+# API de reservas.
 
 [![Java](https://img.shields.io/badge/Java-21%20LTS-orange.svg?style=flat&logo=openjdk)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-brightgreen.svg?style=flat&logo=springboot)](https://spring.io/projects/spring-boot)
@@ -8,16 +8,16 @@
 [![Tests](https://img.shields.io/badge/Tests-89%20Passing-success.svg?style=flat)]()
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Backend RESTful de nivel de producción desarrollado en **Java 21** y **Spring Boot 4** para la administración integral de un complejo deportivo: gestión de usuarios, programación de actividades con cupos dinámicos, reservas transaccionales concurrentes con prevención de sobreventa (*overbooking*), y control de asistencia mediante máquina de estados finita (FSM).
+Backend RESTful en **Java 21** y **Spring Boot 4** para la administración: gestión de usuarios, programación de actividades con cupos dinámicos, reservas transaccionales con overbooking y control de asistencia mediante FSM.
 
 ---
 
-## 📌 Aspectos Destacados de Ingeniería
+## Algunos aspectos 
 
-* **Control Estricto de Concurrencia (ACID):** Uso de **Bloqueo Pesimista de Escritura** (`SELECT ... FOR UPDATE`) a nivel de base de datos para prevenir condiciones de carrera cuando múltiples usuarios compiten por los últimos cupos disponibles.
-* **Máquina de Estados Finita (FSM):** Flujo unidireccional estricto de asistencia (`PENDIENTE` $\rightarrow$ `PRESENTE` / `AUSENTE`) con validaciones de precondición temporal y estados terminales irreversibles.
+* **Control Estricto de Concurrencia:** Bloqueo Pesimista de Escritura a nivel de base de datos para prevenir condiciones de carrera cuando múltiples usuarios compiten por los últimos cupos disponibles.
+* **Máquina de Estados Finita:** Flujo unidireccional estricto de asistencia (`PENDIENTE` $\rightarrow$ `PRESENTE` / `AUSENTE`) con validaciones de precondición temporal y estados terminales irreversibles.
 * **Consultas Dinámicas con JPA Criteria API:** Filtrado flexible y combinable de actividades por deporte, estado y rangos temporales mediante `Specification<Activity>`.
-* **Cancelación Lógica (Soft Delete):** Preservación de trazabilidad histórica y consistencia referencial para reportería y auditoría.
+* **Cancelación Lógica:** Preservación de trazabilidad histórica.
 * **Manejo Centralizado de Excepciones:** Respuestas HTTP uniformes bajo estándar RFC 7807 (`@RestControllerAdvice`).
 * **Suite de Pruebas Exhaustiva:** **89 tests automatizados** que abarcan pruebas unitarias con Mockito/AssertJ, pruebas de capa web con `MockMvc`, persistencia `@DataJpaTest`, y un test de integración multihilo que simula disputas de cupos con `CountDownLatch` y `ExecutorService`.
 * **DevOps & Contenerización:** `Dockerfile` multi-stage ligero con Eclipse Temurin JRE y usuario no-root, orquestado con `docker-compose.yml` y pipeline de Integración Continua en **GitHub Actions**.
@@ -26,7 +26,7 @@ Backend RESTful de nivel de producción desarrollado en **Java 21** y **Spring B
 
 ## 🏛 Arquitectura y Modelo de Dominio
 
-### Diagrama Entidad-Relación (ERD)
+### Diagrama Entidad-Relación 
 
 ```mermaid
 erDiagram
@@ -70,7 +70,7 @@ erDiagram
     }
 ```
 
-### Máquina de Estados de Asistencia (FSM)
+### Máquina de Estados de Asistencia 
 
 ```mermaid
 stateDiagram-v2
@@ -81,7 +81,7 @@ stateDiagram-v2
     AUSENTE --> [*] : Estado Terminal
 ```
 
-### Prevención de Condiciones de Carrera (Pessimistic Locking)
+### Prevención de Condiciones de Carrera 
 
 ```mermaid
 sequenceDiagram
@@ -114,11 +114,11 @@ sequenceDiagram
 
 ---
 
-## 📋 Catálogo de Endpoints REST (18 Endpoints)
+## Endpoints REST
 
 La API cuenta con 18 endpoints organizados bajo el prefijo `/api`:
 
-### 👤 Usuarios (`/api/users`)
+### Usuarios (`/api/users`)
 | Método | Endpoint | Descripción | Códigos HTTP |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/users` | Registrar un nuevo usuario | `201`, `400`, `409` |
@@ -127,7 +127,7 @@ La API cuenta con 18 endpoints organizados bajo el prefijo `/api`:
 | `PUT` | `/api/users/{id}` | Actualizar datos de usuario | `200`, `400`, `404`, `409` |
 | `DELETE` | `/api/users/{id}` | Eliminar usuario (si no tiene reservas) | `204`, `404`, `409` |
 
-### 🏋️ Actividades (`/api/activities`)
+### Actividades (`/api/activities`)
 | Método | Endpoint | Descripción | Códigos HTTP |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/activities` | Programar una nueva actividad deportiva | `201`, `400`, `409` |
@@ -136,7 +136,7 @@ La API cuenta con 18 endpoints organizados bajo el prefijo `/api`:
 | `PUT` | `/api/activities/{id}` | Modificar datos editables de una actividad futura | `200`, `400`, `404`, `409` |
 | `DELETE` | `/api/activities/{id}` | Cancelación lógica de una actividad | `204`, `404`, `409` |
 
-### 🎟️ Reservas (`/api/reservations`)
+### Reservas (`/api/reservations`)
 | Método | Endpoint | Descripción | Códigos HTTP |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/reservations` | Crear reserva con bloqueo pesimista contra sobreventa | `201`, `400`, `404`, `409` |
@@ -145,7 +145,7 @@ La API cuenta con 18 endpoints organizados bajo el prefijo `/api`:
 | `GET` | `/api/users/{userId}/reservations` | Consultar reservas de un usuario | `200`, `404` |
 | `GET` | `/api/activities/{activityId}/reservations` | Consultar reservas de una actividad | `200`, `404` |
 
-### ⏱️ Asistencia (`/api/reservations/{id}/attendance`)
+### Asistencia (`/api/reservations/{id}/attendance`)
 | Método | Endpoint | Descripción | Códigos HTTP |
 | :--- | :--- | :--- | :--- |
 | `PUT` | `/api/reservations/{id}/attendance` | Registrar `PRESENTE` o `AUSENTE` (FSM irreversible) | `200`, `400`, `404`, `409` |
@@ -154,7 +154,7 @@ La API cuenta con 18 endpoints organizados bajo el prefijo `/api`:
 
 ---
 
-## 🛠️ Stack Tecnológico
+## Stack 
 
 * **Lenguaje:** Java 21 (LTS)
 * **Framework:** Spring Boot 4.1.1
@@ -168,20 +168,12 @@ La API cuenta con 18 endpoints organizados bajo el prefijo `/api`:
 
 ---
 
-## 📖 Architecture Decision Records (ADRs)
 
-Las decisiones arquitectónicas clave se encuentran documentadas en la carpeta [`docs/adr/`](docs/adr/):
-* [**ADR-0001:** Bloqueo Pesimista (SELECT FOR UPDATE) para Control de Cupos y Prevención de Overbooking](docs/adr/0001-bloqueo-pesimista-concurrencia.md)
-* [**ADR-0002:** Máquina de Estados Finita Unidireccional para Control de Asistencia](docs/adr/0002-maquina-estados-asistencia.md)
-* [**ADR-0003:** Cancelación Lógica (Soft Delete) vs Eliminación Física para Actividades y Reservas](docs/adr/0003-cancelacion-logica-vs-fisica.md)
+## Arranque
 
----
+### Opción 1: Ejecución con Docker Compose
 
-## 🚀 Puesta en Marcha
-
-### Opción 1: Ejecución con Docker Compose (Recomendada)
-
-Solo requieres tener instalado Docker / Podman:
+Requiere Docker:
 
 ```bash
 docker compose up --build -d
@@ -201,8 +193,8 @@ docker compose down
 
 ### Opción 2: Ejecución Local con Maven
 
-1. Asegúrate de tener **JDK 21** configurado.
-2. Inicia un contenedor MySQL o tu instancia local:
+1. Requiere JDK 21 configurado.
+2. Inicia un contenedor MySQL o instancia local:
    ```bash
    docker run --name mysql-local -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=reservas_db -p 3306:3306 -d mysql:8.0
    ```
@@ -213,7 +205,7 @@ docker compose down
 
 ---
 
-## 🧪 Ejecución de Tests
+## Ejecución de Tests
 
 Para compilar y correr los **89 tests automatizados**:
 
@@ -228,9 +220,3 @@ Para compilar y correr los **89 tests automatizados**:
 * **Prueba de Concurrencia Multihilo (`@SpringBootTest`):** Test real de carreras críticas con `CountDownLatch` y `ExecutorService` que certifica la imposibilidad de sobreventa de cupos.
 
 ---
-
-## 👨‍💻 Autor
-
-**Simón Castillo**  
-* Ingeniero de Software / Backend Developer
-* [GitHub](https://github.com/simon-castillo-01b)

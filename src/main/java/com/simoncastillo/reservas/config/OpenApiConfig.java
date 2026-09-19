@@ -19,7 +19,7 @@ public class OpenApiConfig {
                         .version("v1.0.0")
                         .contact(new Contact()
                                 .name("Simón Castillo")
-                                .url("https://github.com/simon-castillo-0b1"))
+                                .url("https://github.com/simon-castillo-01b"))
                         .license(new License()
                                 .name("MIT License")
                                 .url("https://opensource.org/licenses/MIT")));
